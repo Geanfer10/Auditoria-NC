@@ -1,5 +1,5 @@
 {
- "atualizado": "2026-10-28T09:00:00-03:00",
+ "atualizado": "2026-10-28T09:03:27-03:00",
  "ncs": [
   {
    "id": "13405043408",
@@ -11,27 +11,27 @@
    "descricao": "Porta-isca nº 39 do controle de pragas sem placa de identificação na parede.",
    "requisito": "",
    "acao": "Instalar placa de identificação do ponto (parte civil).",
-   "responsavel": "",
+   "responsavel": "Tiago",
    "prazo": "",
    "abertura": "2026-10-28",
    "foto": "fotos/13405043408.jpg",
-   "criadoEm": "2026-10-28T11:52:03Z"
+   "criadoEm": "2026-10-28T11:52:30Z"
   },
   {
    "id": "13405043303",
    "num": "NC-02",
    "titulo": "Galões de químico sem gaiola na linha",
-   "setor": "Produção",
+   "setor": "Polpa",
    "classificacao": "Menor",
    "status": "Aberta",
    "descricao": "Galões de produto químico da bomba dosadora apoiados diretamente sobre a mesa de rolos da linha, sem proteção ou contenção.",
    "requisito": "",
    "acao": "Montar gaiola de proteção para os galões.",
-   "responsavel": "",
+   "responsavel": "Elielton",
    "prazo": "",
    "abertura": "2026-10-28",
    "foto": "fotos/13405043303.jpg",
-   "criadoEm": "2026-10-28T11:52:02Z"
+   "criadoEm": "2026-10-28T11:52:29Z"
   },
   {
    "id": "13405043336",
@@ -43,11 +43,11 @@
    "descricao": "Parede com reboco quebrado e cantoneira com corrosão (ferrugem) junto ao piso.",
    "requisito": "",
    "acao": "Requadrejar a parede (reparo civil) e tratar a corrosão da cantoneira.",
-   "responsavel": "",
+   "responsavel": "Tiago",
    "prazo": "",
    "abertura": "2026-10-28",
    "foto": "fotos/13405043336.jpg",
-   "criadoEm": "2026-10-28T11:52:01Z"
+   "criadoEm": "2026-10-28T11:52:29Z"
   }
  ]
 }
