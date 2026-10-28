@@ -123,7 +123,10 @@ def main():
             "criadoEm": it["created_at"],
         })
 
-    ncs.sort(key=lambda n: n["criadoEm"], reverse=True)
+    def ordem(n):
+        d = re.findall(r"\d+", n["num"])
+        return (int(d[0]) if d else 0, n["criadoEm"])
+    ncs.sort(key=ordem, reverse=True)  # mais nova (maior número) primeiro
 
     caminho = os.path.join(PASTA_DADOS, "ncs.json")
     antigo = None
