@@ -1,6 +1,22 @@
 {
- "atualizado": "2026-10-28T09:15:31-03:00",
+ "atualizado": "2026-10-28T09:52:41-03:00",
  "ncs": [
+  {
+   "id": "13405463676",
+   "num": "NC-04",
+   "titulo": "Controle de manutenção – Secadores de mão",
+   "setor": "Envase",
+   "classificacao": "Maior",
+   "status": "Aberta",
+   "descricao": "Necessidade de criar um controle de manutenção dos secadores de mão.",
+   "requisito": "",
+   "acao": "Criar uma planilha de controle de manutenção dos secadores de mão.",
+   "responsavel": "Gean",
+   "prazo": "",
+   "abertura": "2026-10-28",
+   "foto": "",
+   "criadoEm": "2026-10-28T12:50:39Z"
+  },
   {
    "id": "13405043408",
    "num": "NC-03",
