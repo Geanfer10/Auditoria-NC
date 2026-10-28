@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Não Conformidades – Auditoria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Glass: fundo de fábrica ao entardecer, cartões de vidro fosco, navegação em pílula, dock de controles */
+:root{
+  --ink:#f4f8f5; --ink-soft:rgba(244,248,245,.72); --ink-faint:rgba(244,248,245,.5);
+  --glass:rgba(255,255,255,.12); --glass-strong:rgba(255,255,255,.2); --glass-line:rgba(255,255,255,.28);
+  --solid:#1b2a22;
+  --maior:#ff5a5f; --menor:#ff9d3c; --obs:#f5cf4a; --om:#6fa8ff;
+  --aberta:#ff6b6b; --trat:#ffb04a; --ok:#4fdc8c;
+  --brand:#1e9350;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --blur:18px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:var(--f-body);color:var(--ink);font-size:15px;line-height:1.45;background:#0d1a14;overflow-x:hidden}
+.scene{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:
+   radial-gradient(1200px 600px at 78% 8%,rgba(255,168,92,.55),transparent 60%),
+   radial-gradient(900px 520px at 12% 20%,rgba(255,110,90,.35),transparent 60%),
+   linear-gradient(180deg,#2a3b5c 0%,#4f4a6b 34%,#b8735a 62%,#1d3a2b 63%,#0e2219 100%)}
+.scene svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55}
+.b1{width:420px;height:420px;background:#2bd17a;left:-80px;bottom:8%}
+.b2{width:360px;height:360px;background:#ffb14d;right:6%;top:24%}
+.wrap{max-width:1600px;margin:0 auto;padding:18px max(18px,env(safe-area-inset-right,0px)) 120px max(18px,env(safe-area-inset-left,0px))}
+.glass{background:var(--glass);border:1px solid var(--glass-line);border-radius:20px;
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(140%);backdrop-filter:blur(var(--blur)) saturate(140%);
+  box-shadow:0 10px 40px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.25)}
+body.lite .glass{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(27,42,34,.88)}
+/* topo */
+.top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between;padding:16px 22px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,3.6vw,50px);line-height:1;margin:4px 0 0;letter-spacing:.01em;text-wrap:balance}
+.live{display:flex;align-items:center;gap:10px;font:500 13px var(--f-num);color:var(--ink-soft);padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.22)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+.dot.off{background:var(--aberta);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,220,140,.7)}70%{box-shadow:0 0 0 10px rgba(79,220,140,0)}100%{box-shadow:0 0 0 0 rgba(79,220,140,0)}}
+/* placar */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:16px 0}
+.kpi{padding:14px 18px}
+.kpi b{display:block;font:700 40px/1.05 var(--f-num);font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.kpi.maior b{color:var(--maior)}.kpi.menor b{color:var(--menor)}.kpi.obs b{color:var(--obs)}.kpi.om b{color:var(--om)}.kpi.ok b{color:var(--ok)}
+.prog{height:6px;border-radius:9px;background:rgba(255,255,255,.15);margin-top:10px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok);width:0;transition:width .6s}
+/* pílulas */
+.pills{display:inline-flex;flex-wrap:wrap;gap:6px;padding:6px;border-radius:999px;margin-bottom:18px}
+.pill-btn{border:0;background:transparent;color:var(--ink);font:600 14px var(--f-body);padding:8px 16px;border-radius:999px;cursor:pointer}
+.pill-btn[aria-pressed="true"]{background:rgba(255,255,255,.9);color:#14231a}
+.pill-btn:hover{background:rgba(255,255,255,.15)}
+.pill-btn[aria-pressed="true"]:hover{background:#fff}
+button:focus-visible{outline:3px solid var(--om);outline-offset:2px}
+/* cartões */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.card{overflow:hidden;display:flex;flex-direction:column;min-width:0;animation:entra .5s ease-out backwards}
+@keyframes entra{from{opacity:.3;transform:translateY(10px)}}
+.card.new{box-shadow:0 0 0 3px var(--om),0 10px 40px rgba(0,0,0,.3)}
+.photo{position:relative;aspect-ratio:4/3;width:100%;border:0;padding:0;margin:0;background:rgba(0,0,0,.25);cursor:zoom-in;overflow:hidden;color:var(--ink-faint);font:13px var(--f-body)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;top:12px;left:12px;font:700 12px var(--f-num);letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px;color:#14231a}
+.rodape{display:flex;gap:10px;align-items:baseline;padding:12px 16px;background:rgba(10,18,14,.72);border-bottom:3px solid var(--sev)}
+.rodape small{flex:none;font:700 13px var(--f-num);color:var(--sev)}
+.rodape span{font-weight:600;font-size:15.5px;line-height:1.3;overflow-wrap:anywhere}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.line{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tag{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor}
+.setor{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.desc{margin:0;color:var(--ink);overflow-wrap:anywhere}
+dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0;font-size:13.5px}
+dt{color:var(--ink-faint);font-weight:600} dd{margin:0;overflow-wrap:anywhere}
+.late{color:var(--maior);font-weight:700}
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-soft)}
+.empty strong{display:block;font:700 28px var(--f-display);color:var(--ink);margin-bottom:6px}
+/* dock */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));display:flex;gap:6px;padding:8px;border-radius:999px;z-index:5}
+.dock button{border:0;background:transparent;color:var(--ink);font:600 13px var(--f-body);padding:9px 16px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.dock button[aria-pressed="true"]{background:rgba(255,255,255,.9);color:#14231a}
+/* modo TV: destaque de uma NC por vez */
+.tv{position:fixed;inset:0;z-index:20;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;padding:28px;background:rgba(8,14,11,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+body.lite .tv{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0d1a14}
+.tv .ph{border-radius:22px;overflow:hidden;position:relative;background:#000}
+.tv .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.tv .info{padding:28px;display:flex;flex-direction:column;gap:16px;overflow:auto}
+.tv .num{font:700 64px/1 var(--f-num)}
+.tv .tit{font:700 clamp(30px,3vw,46px)/1.1 var(--f-display);text-wrap:balance}
+.tv .txt{font-size:20px;line-height:1.45}
+.tv .bar{height:5px;background:rgba(255,255,255,.15);border-radius:9px;overflow:hidden;margin-top:auto}
+.tv .bar i{display:block;height:100%;background:var(--ink);width:0}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:grid;place-items:center;z-index:30;padding:16px;cursor:zoom-out}
+.lb img{max-width:100%;max-height:92vh;border-radius:8px}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.tv{grid-template-columns:1fr;grid-template-rows:45% 1fr;padding:14px}.tv .num{font-size:40px}.tv .txt{font-size:16px}.dock button{padding:8px 10px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="scene" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <svg viewBox="0 0 1600 400" preserveAspectRatio="xMidYMax slice">
+    <path fill="#0f2419" d="M0 260h120v-60h40v-90h26v90h60v-40h110v100h70V140l60-40 60 40v120h80v-70h140v-30h22v-80h22v80h36v100h90v-60l70-50 70 50v60h90V150h30V70h24v80h40v110h120v-50h90v50h70v140H0z"/>
+    <path fill="#0a1a12" d="M0 320h1600v80H0z"/>
+    <g fill="#ffd28a" opacity=".55"><rect x="400" y="170" width="14" height="10"/><rect x="430" y="170" width="14" height="10"/><rect x="820" y="230" width="14" height="10"/><rect x="1180" y="190" width="14" height="10"/><rect x="1210" y="190" width="14" height="10"/></g>
+  </svg>
+</div>
+
+<div class="wrap">
+  <header class="glass top">
+    <div>
+      <div class="eyebrow">Goiás Verde · Luziânia-GO · Auditoria 28/10/2026</div>
+      <h1>Painel de Não Conformidades</h1>
+    </div>
+    <div class="live"><span class="dot off" id="dot"></span><span id="liveTxt">Carregando…</span></div>
+  </header>
+
+  <section class="kpis" aria-label="Resumo">
+    <div class="glass kpi"><b id="k-total">–</b><span>Total de NCs</span></div>
+    <div class="glass kpi maior"><b id="k-maior">–</b><span>Maiores</span></div>
+    <div class="glass kpi menor"><b id="k-menor">–</b><span>Menores</span></div>
+    <div class="glass kpi obs"><b id="k-obs">–</b><span>Observações</span></div>
+    <div class="glass kpi om"><b id="k-om">–</b><span>Oport. melhoria</span></div>
+    <div class="glass kpi ok"><b id="k-ok">–</b><span>Concluídas</span><div class="prog"><i id="k-prog"></i></div></div>
+  </section>
+
+  <nav class="glass pills" aria-label="Filtros">
+    <button class="pill-btn" data-f="Todas" aria-pressed="true">Todas</button>
+    <button class="pill-btn" data-f="Maior" aria-pressed="false">Maior</button>
+    <button class="pill-btn" data-f="Menor" aria-pressed="false">Menor</button>
+    <button class="pill-btn" data-f="Observação" aria-pressed="false">Observação</button>
+    <button class="pill-btn" data-f="Oportunidade de Melhoria" aria-pressed="false">Oport. melhoria</button>
+    <button class="pill-btn" data-f="Abertas" aria-pressed="false">Só abertas</button>
+  </nav>
+
+  <main class="grid" id="grid" aria-live="polite">
+    <div class="glass empty"><strong>Carregando as não conformidades…</strong>Elas vêm do quadro do Monday e aparecem aqui sozinhas.</div>
+  </main>
+</div>
+
+<div class="glass dock" role="toolbar" aria-label="Controles">
+  <button id="btnTv" aria-pressed="false">▶ Modo TV</button>
+  <button id="btnLite" aria-pressed="false">Vidro leve</button>
+  <button id="btnRefresh">Atualizar</button>
+</div>
+
+<script>
+(function(){
+  const SEV={"Maior":"--maior","Menor":"--menor","Observação":"--obs","Oportunidade de Melhoria":"--om"};
+  const ST={"Aberta":"--aberta","Em tratativa":"--trat","Concluída":"--ok"};
+  const POLL_MS=30000, TV_MS=12000;
+  let rows=[], filter="Todas", seen=null, lastStamp=null, tvTimer=null, tvIdx=0;
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const fmtD=d=>{if(!d)return"";const p=d.slice(0,10).split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:d};
+  const hoje=()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")};
+  const sev=c=>`var(${SEV[c]||"--ink-faint"})`;
+  const pref=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){}};
+
+  if(pref("nc-lite")==="1"){document.body.classList.add("lite");$("btnLite").setAttribute("aria-pressed","true")}
+
+  document.querySelectorAll(".pill-btn").forEach(b=>b.addEventListener("click",()=>{
+    filter=b.dataset.f;document.querySelectorAll(".pill-btn").forEach(x=>x.setAttribute("aria-pressed",x===b));render();
+  }));
+
+  function filtradas(){return rows.filter(r=>filter==="Todas"||(filter==="Abertas"?r.status!=="Concluída":r.classificacao===filter))}
+
+  function render(){
+    const k={total:rows.length,maior:0,menor:0,obs:0,om:0,ok:0};
+    rows.forEach(r=>{const c=r.classificacao;if(c==="Maior")k.maior++;else if(c==="Menor")k.menor++;else if(c==="Observação")k.obs++;else if(c==="Oportunidade de Melhoria")k.om++;if(r.status==="Concluída")k.ok++;});
+    for(const x in k)$("k-"+x).textContent=k[x];
+    $("k-prog").style.width=(k.total?Math.round(k.ok/k.total*100):0)+"%";
+    const list=filtradas(), g=$("grid");
+    if(!list.length){g.innerHTML=`<div class="glass empty"><strong>${rows.length?"Nada neste filtro":"Nenhuma não conformidade registrada ainda"}</strong>${rows.length?"Escolha outro filtro acima.":"Cadastre no quadro do Monday e ela aparece aqui sozinha."}</div>`;return;}
+    g.innerHTML=list.map(r=>{
+      const late=r.prazo&&r.status!=="Concluída"&&r.prazo.slice(0,10)<hoje();
+      const isNew=seen&&!seen.has(r.id);
+      return `<article class="glass card${isNew?" new":""}" style="--sev:${sev(r.classificacao)}">
+        <button class="photo" data-img="${esc(r.foto)}" aria-label="Ampliar foto da ${esc(r.num)}">
+          ${r.foto?`<img src="${esc(r.foto)}" alt="" loading="lazy">`:"Sem foto"}
+          <span class="badge" style="background:${sev(r.classificacao)}">${esc(r.classificacao)}</span></button>
+        <div class="rodape"><small>${esc(r.num)}</small><span>${esc(r.titulo||r.descricao)}</span></div>
+        <div class="body">
+          <div class="line"><span class="tag" style="color:var(${ST[r.status]||"--ink-soft"})">${esc(r.status)}</span><span class="setor">${esc(r.setor)}</span></div>
+          ${r.descricao?`<p class="desc">${esc(r.descricao)}</p>`:""}
+          <dl>
+            ${r.requisito?`<dt>Requisito</dt><dd>${esc(r.requisito)}</dd>`:""}
+            ${r.acao?`<dt>Ação</dt><dd>${esc(r.acao)}</dd>`:""}
+            ${r.responsavel?`<dt>Resp.</dt><dd>${esc(r.responsavel)}</dd>`:""}
+            ${r.prazo?`<dt>Prazo</dt><dd class="${late?"late":""}">${fmtD(r.prazo)}${late?" · vencido":""}</dd>`:""}
+          </dl>
+        </div></article>`;}).join("");
+    seen=new Set(rows.map(r=>r.id));
+  }
+
+  async function carregar(){
+    try{
+      const res=await fetch("dados/ncs.json?t="+Date.now(),{cache:"no-store"});
+      if(!res.ok)throw new Error(res.status);
+      const j=await res.json();
+      $("dot").classList.remove("off");
+      const hora=j.atualizado?new Date(j.atualizado).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):"--:--";
+      $("liveTxt").textContent="Ao vivo · Monday às "+hora;
+      if(j.atualizado!==lastStamp){lastStamp=j.atualizado;rows=j.ncs||[];render();if(tvTimer)mostrarTv();}
+    }catch(e){$("dot").classList.add("off");$("liveTxt").textContent="Sem conexão · tentando de novo";}
+  }
+
+  // Modo TV
+  function mostrarTv(){
+    const list=filtradas();let el=document.querySelector(".tv");
+    if(!list.length){if(el)el.remove();return;}
+    tvIdx=tvIdx%list.length;const r=list[tvIdx];
+    if(!el){el=document.createElement("div");el.className="tv";el.onclick=pararTv;document.body.appendChild(el);}
+    el.style.setProperty("--sev",sev(r.classificacao));
+    el.innerHTML=`<div class="ph">${r.foto?`<img src="${esc(r.foto)}" alt="">`:""}</div>
+      <div class="glass info">
+        <div class="line"><span class="badge" style="position:static;background:${sev(r.classificacao)}">${esc(r.classificacao)}</span><span class="tag" style="color:var(${ST[r.status]||"--ink-soft"})">${esc(r.status)}</span><span class="setor">${esc(r.setor)}</span></div>
+        <div class="num" style="color:${sev(r.classificacao)}">${esc(r.num)}</div>
+        <div class="tit">${esc(r.titulo||r.descricao)}</div>
+        ${r.descricao?`<div class="txt">${esc(r.descricao)}</div>`:""}
+        ${r.acao?`<div class="txt"><b>Ação:</b> ${esc(r.acao)}</div>`:""}
+        ${r.responsavel||r.prazo?`<div class="txt">${r.responsavel?"<b>Resp.:</b> "+esc(r.responsavel)+"  ":""}${r.prazo?"<b>Prazo:</b> "+fmtD(r.prazo):""}</div>`:""}
+        <div class="txt" style="color:var(--ink-faint);font-size:14px">${tvIdx+1} de ${list.length} · toque para sair</div>
+        <div class="bar"><i id="tvbar"></i></div></div>`;
+    const bar=$("tvbar");requestAnimationFrame(()=>{bar.style.transition=`width ${TV_MS}ms linear`;bar.style.width="100%"});
+  }
+  function iniciarTv(){$("btnTv").setAttribute("aria-pressed","true");$("btnTv").textContent="■ Sair da TV";tvIdx=0;mostrarTv();tvTimer=setInterval(()=>{tvIdx++;mostrarTv()},TV_MS);}
+  function pararTv(){clearInterval(tvTimer);tvTimer=null;const el=document.querySelector(".tv");if(el)el.remove();$("btnTv").setAttribute("aria-pressed","false");$("btnTv").textContent="▶ Modo TV";}
+  $("btnTv").onclick=()=>tvTimer?pararTv():iniciarTv();
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")pararTv()});
+
+  $("btnLite").onclick=()=>{const on=document.body.classList.toggle("lite");$("btnLite").setAttribute("aria-pressed",on);pref("nc-lite",on?"1":"0");};
+  $("btnRefresh").onclick=carregar;
+
+  document.addEventListener("click",e=>{
+    const p=e.target.closest(".photo");
+    if(p&&p.dataset.img){const lb=document.createElement("div");lb.className="lb";lb.innerHTML=`<img src="${esc(p.dataset.img)}" alt="">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb);}
+  });
+
+  carregar();setInterval(carregar,POLL_MS);
+})();
+</script>
+</body>
+</html>

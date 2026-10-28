@@ -1,0 +1,41 @@
+name: Atualizar NCs do Monday
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # a cada 5 min (o GitHub pode atrasar alguns minutos)
+  workflow_dispatch:         # botão "Run workflow" para atualizar na hora
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atualizar-ncs
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Buscar NCs no Monday
+        env:
+          MONDAY_API_TOKEN: ${{ secrets.MONDAY_API_TOKEN }}
+        run: python scripts/buscar_monday.py
+
+      - name: Salvar se mudou
+        run: |
+          git config user.name "robo-auditoria"
+          git config user.email "robo-auditoria@users.noreply.github.com"
+          git add dados fotos
+          if git diff --cached --quiet; then
+            echo "Nada novo."
+          else
+            git commit -m "Atualiza NCs do Monday"
+            git pull --rebase
+            git push
+          fi
