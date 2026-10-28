@@ -1,5 +1,5 @@
 {
- "atualizado": "2026-10-28T14:25:52-03:00",
+ "atualizado": "2026-10-28T14:26:52-03:00",
  "ncs": [
   {
    "id": "13408936736",
@@ -194,22 +194,6 @@
    "criadoEm": "2026-10-28T17:22:48Z"
   },
   {
-   "id": "13408925430",
-   "num": "NC-10",
-   "titulo": "Buraco na parede acima dos bules (Preparação)",
-   "setor": "Sala de Preparação",
-   "classificacao": "Menor",
-   "status": "Aberta",
-   "descricao": "Setor de preparação: buraco na parede, acima dos bules.",
-   "requisito": "",
-   "acao": "",
-   "responsavel": "",
-   "prazo": "",
-   "abertura": "2026-10-28",
-   "foto": "",
-   "criadoEm": "2026-10-28T17:22:48Z"
-  },
-  {
    "id": "13408907258",
    "num": "NC-09",
    "titulo": "Lateral do portão de recebimento quebrada (DMPE)",
@@ -217,22 +201,6 @@
    "classificacao": "Menor",
    "status": "Aberta",
    "descricao": "Setor do DMPE: lateral do portão de recebimento quebrada.",
-   "requisito": "",
-   "acao": "",
-   "responsavel": "",
-   "prazo": "",
-   "abertura": "2026-10-28",
-   "foto": "",
-   "criadoEm": "2026-10-28T17:22:48Z"
-  },
-  {
-   "id": "13408886244",
-   "num": "NC-08",
-   "titulo": "Acúmulo de lixo nos drenos da sala de manutenção",
-   "setor": "Manutenção",
-   "classificacao": "Menor",
-   "status": "Aberta",
-   "descricao": "Sala de manutenção: acúmulo de lixo nos drenos — sacolas plásticas e resíduos de folhas de vegetação.",
    "requisito": "",
    "acao": "",
    "responsavel": "",
