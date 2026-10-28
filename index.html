@@ -24,15 +24,11 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{font-family:var(--f-body);color:var(--ink);font-size:15px;line-height:1.45;background:#0d1a14;overflow-x:hidden}
-.scene{position:fixed;inset:0;z-index:-1;overflow:hidden;
-  background:
-   radial-gradient(1200px 600px at 78% 8%,rgba(255,168,92,.55),transparent 60%),
-   radial-gradient(900px 520px at 12% 20%,rgba(255,110,90,.35),transparent 60%),
-   linear-gradient(180deg,#2a3b5c 0%,#4f4a6b 34%,#b8735a 62%,#1d3a2b 63%,#0e2219 100%)}
-.scene svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%}
-.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55}
-.b1{width:420px;height:420px;background:#2bd17a;left:-80px;bottom:8%}
-.b2{width:360px;height:360px;background:#ffb14d;right:6%;top:24%}
+.scene{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#1a1530}
+.scene canvas{position:absolute;inset:0;width:100%;height:100%}
+.scene .foto{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s}
+.scene .foto.on{opacity:1}
+.scene .veu{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,30,.35),rgba(10,14,30,0) 35%,rgba(5,12,8,.45))}
 .wrap{max-width:1600px;margin:0 auto;padding:18px max(18px,env(safe-area-inset-right,0px)) 120px max(18px,env(safe-area-inset-left,0px))}
 .glass{background:var(--glass);border:1px solid var(--glass-line);border-radius:20px;
   -webkit-backdrop-filter:blur(var(--blur)) saturate(140%);backdrop-filter:blur(var(--blur)) saturate(140%);
@@ -105,14 +101,7 @@ body.lite .tv{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0d1a
 </style>
 </head>
 <body>
-<div class="scene" aria-hidden="true">
-  <div class="blob b1"></div><div class="blob b2"></div>
-  <svg viewBox="0 0 1600 400" preserveAspectRatio="xMidYMax slice">
-    <path fill="#0f2419" d="M0 260h120v-60h40v-90h26v90h60v-40h110v100h70V140l60-40 60 40v120h80v-70h140v-30h22v-80h22v80h36v100h90v-60l70-50 70 50v60h90V150h30V70h24v80h40v110h120v-50h90v50h70v140H0z"/>
-    <path fill="#0a1a12" d="M0 320h1600v80H0z"/>
-    <g fill="#ffd28a" opacity=".55"><rect x="400" y="170" width="14" height="10"/><rect x="430" y="170" width="14" height="10"/><rect x="820" y="230" width="14" height="10"/><rect x="1180" y="190" width="14" height="10"/><rect x="1210" y="190" width="14" height="10"/></g>
-  </svg>
-</div>
+<div class="scene" aria-hidden="true"><canvas id="bg"></canvas><div class="foto" id="fotoFundo"></div><div class="veu"></div></div>
 
 <div class="wrap">
   <header class="glass top">
@@ -246,6 +235,80 @@ body.lite .tv{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0d1a
   });
 
   carregar();setInterval(carregar,POLL_MS);
+})();
+</script>
+
+<script>
+/* Fundo: pôr do sol no cerrado com a fábrica e a plantação de tomate. Se existir img/fundo.jpg, usa a foto. */
+(function(){
+  const c=document.getElementById("bg"),x=c.getContext("2d");
+  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  function pinta(){
+    const dpr=Math.min(window.devicePixelRatio||1,2),W=innerWidth,H=innerHeight;
+    c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);seed=7;
+    const hz=H*.64, sx=W*.68, sy=hz-H*.03;
+    // céu
+    let g=x.createLinearGradient(0,0,0,hz);
+    g.addColorStop(0,"#0f1438");g.addColorStop(.3,"#3a2a63");g.addColorStop(.58,"#a2456b");g.addColorStop(.8,"#f0733f");g.addColorStop(1,"#ffc35a");
+    x.fillStyle=g;x.fillRect(0,0,W,hz+2);
+    // estrelas no alto
+    x.fillStyle="#fff";for(let i=0;i<90;i++){x.globalAlpha=rnd()*.6*(1-i/90);x.fillRect(rnd()*W,rnd()*H*.25,1.2,1.2)}x.globalAlpha=1;
+    // brilho do sol
+    let r=x.createRadialGradient(sx,sy,0,sx,sy,Math.max(W,H)*.7);
+    r.addColorStop(0,"rgba(255,236,170,1)");r.addColorStop(.05,"rgba(255,200,110,.9)");r.addColorStop(.2,"rgba(255,130,70,.45)");r.addColorStop(.55,"rgba(200,60,90,.12)");r.addColorStop(1,"rgba(0,0,0,0)");
+    x.fillStyle=r;x.fillRect(0,0,W,H);
+    // raios de luz
+    x.save();x.globalCompositeOperation="lighter";
+    for(let i=0;i<14;i++){const a=-Math.PI*(.08+.84*rnd()),L=Math.max(W,H)*1.2,w=.015+rnd()*.03;
+      const lg=x.createLinearGradient(sx,sy,sx+Math.cos(a)*L,sy+Math.sin(a)*L);lg.addColorStop(0,"rgba(255,210,140,.16)");lg.addColorStop(1,"rgba(255,210,140,0)");
+      x.fillStyle=lg;x.beginPath();x.moveTo(sx,sy);x.lineTo(sx+Math.cos(a-w)*L,sy+Math.sin(a-w)*L);x.lineTo(sx+Math.cos(a+w)*L,sy+Math.sin(a+w)*L);x.fill()}
+    x.restore();
+    // disco do sol
+    x.fillStyle="#fff3cf";x.beginPath();x.arc(sx,sy,Math.max(18,W*.022),0,7);x.fill();
+    // nuvens iluminadas por baixo
+    x.save();x.filter="blur("+Math.round(W*.012)+"px)";
+    for(let i=0;i<16;i++){const cx=rnd()*W*1.2-W*.1,cy=H*(.12+rnd()*.38),cw=W*(.12+rnd()*.25),ch=H*(.018+rnd()*.035);
+      const cg=x.createLinearGradient(0,cy-ch,0,cy+ch);const perto=1-Math.abs(cx-sx)/W;
+      cg.addColorStop(0,"rgba(70,40,90,.75)");cg.addColorStop(1,`rgba(255,${120+perto*90|0},${70+perto*40|0},${.5+perto*.4})`);
+      x.fillStyle=cg;x.beginPath();x.ellipse(cx,cy,cw,ch,0,0,7);x.fill()}
+    x.restore();
+    // serras ao fundo (3 camadas com névoa)
+    const serra=(base,amp,cor,passo)=>{x.fillStyle=cor;x.beginPath();x.moveTo(0,H);let y=base;for(let px=0;px<=W+passo;px+=passo){y=base-amp*(.5+.5*Math.sin(px*.004+rnd()))-rnd()*amp*.4;x.lineTo(px,y)}x.lineTo(W,H);x.fill()};
+    serra(hz-H*.02,H*.07,"rgba(120,60,100,.55)",40);
+    serra(hz+H*.005,H*.05,"rgba(70,40,70,.8)",30);
+    // fábrica
+    const base=hz+H*.035,u=Math.max(W,900)/1600;x.fillStyle="#140f1c";
+    const rect=(a,b,w,h)=>x.fillRect(W*a,base-h*u,w*u,h*u+2);
+    x.fillRect(0,base,W,H);
+    rect(.06,0,260,70);rect(.13,0,120,120);rect(.2,0,320,95);rect(.4,0,420,80);rect(.58,0,200,135);rect(.78,0,340,90);
+    // silos e tanques
+    for(let i=0;i<5;i++){const tx=W*.29+i*46*u,th=(150+((i%2)*25))*u;x.fillRect(tx,base-th,36*u,th);x.beginPath();x.ellipse(tx+18*u,base-th,18*u,7*u,0,0,7);x.fill()}
+    for(let i=0;i<3;i++){const tx=W*.66+i*70*u;x.beginPath();x.ellipse(tx,base-60*u,30*u,10*u,0,0,7);x.fill();x.fillRect(tx-30*u,base-60*u,60*u,60*u)}
+    // chaminé da caldeira + vapor
+    const chx=W*.52,cht=240*u;x.fillRect(chx,base-cht,22*u,cht);
+    x.save();x.filter="blur("+Math.round(14*u)+"px)";
+    for(let i=0;i<12;i++){const k=i/12;x.fillStyle=`rgba(255,${200-k*80|0},${170-k*60|0},${.35*(1-k)})`;x.beginPath();x.arc(chx+11*u-k*W*.18,base-cht-k*H*.22-10*u,(14+k*70)*u,0,7);x.fill()}
+    x.restore();
+    // estrutura metálica / esteira
+    x.strokeStyle="#140f1c";x.lineWidth=3*u;x.beginPath();x.moveTo(W*.46,base-75*u);x.lineTo(W*.58,base-130*u);x.stroke();
+    for(let i=0;i<8;i++){x.beginPath();x.moveTo(W*.46+i*W*.015,base-75*u-i*7*u);x.lineTo(W*.46+i*W*.015,base);x.lineWidth=1.5*u;x.stroke()}
+    // luzes acesas
+    x.fillStyle="rgba(255,205,120,.9)";
+    for(let i=0;i<40;i++){const lx=W*(.06+rnd()*.86),ly=base-(10+rnd()*60)*u;x.fillRect(lx,ly,4*u,3*u)}
+    // brilho no topo dos prédios (contra-luz)
+    let rim=x.createLinearGradient(0,base-140*u,0,base);rim.addColorStop(0,"rgba(255,150,80,.18)");rim.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=rim;x.fillRect(0,base-140*u,W,140*u);
+    // plantação de tomate em perspectiva
+    let chao=x.createLinearGradient(0,base,0,H);chao.addColorStop(0,"#1d2a14");chao.addColorStop(1,"#0a1408");x.fillStyle=chao;x.fillRect(0,base,W,H-base);
+    const vx=sx;for(let i=-40;i<=40;i++){const bx=vx+i*W*.06;
+      const lg=x.createLinearGradient(0,base,0,H);lg.addColorStop(0,"rgba(255,170,90,.0)");lg.addColorStop(1,"rgba(60,110,40,.55)");
+      x.strokeStyle=lg;x.lineWidth=Math.max(1,W*.004);x.beginPath();x.moveTo(vx+(bx-vx)*.02,base+2);x.lineTo(bx,H);x.stroke()}
+    // reflexo do sol no chão
+    let rf=x.createRadialGradient(sx,base,0,sx,base,W*.45);rf.addColorStop(0,"rgba(255,170,90,.35)");rf.addColorStop(1,"rgba(255,170,90,0)");x.fillStyle=rf;x.fillRect(0,base,W,H-base);
+    // vinheta
+    let v=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.8);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.45)");x.fillStyle=v;x.fillRect(0,0,W,H);
+  }
+  pinta();let t;addEventListener("resize",()=>{clearTimeout(t);t=setTimeout(pinta,150)});
+  const im=new Image();im.onload=()=>{const f=document.getElementById("fotoFundo");f.style.backgroundImage="url(img/fundo.jpg)";f.classList.add("on")};im.src="img/fundo.jpg";
 })();
 </script>
 </body>
