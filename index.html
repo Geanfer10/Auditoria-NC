@@ -29,6 +29,11 @@ body{font-family:var(--f-body);color:var(--ink);font-size:15px;line-height:1.45;
 .scene .foto{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s}
 .scene .foto.on{opacity:1}
 .scene .veu{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,30,.35),rgba(10,14,30,0) 35%,rgba(5,12,8,.45))}
+/* com foto de dia: escurece o fundo e deixa o vidro mais escuro para o texto ler bem */
+body.com-foto .scene .veu{background:linear-gradient(180deg,rgba(4,16,28,.62) 0%,rgba(4,16,28,.38) 30%,rgba(4,14,10,.55) 70%,rgba(3,10,7,.78) 100%)}
+body.com-foto{--glass:rgba(8,20,16,.48);--glass-line:rgba(255,255,255,.22)}
+body.com-foto .glass{text-shadow:0 1px 2px rgba(0,0,0,.35)}
+body.com-foto .rodape{background:rgba(6,14,10,.82)}
 .wrap{max-width:1600px;margin:0 auto;padding:18px max(18px,env(safe-area-inset-right,0px)) 120px max(18px,env(safe-area-inset-left,0px))}
 .glass{background:var(--glass);border:1px solid var(--glass-line);border-radius:20px;
   -webkit-backdrop-filter:blur(var(--blur)) saturate(140%);backdrop-filter:blur(var(--blur)) saturate(140%);
@@ -308,7 +313,7 @@ body.lite .tv{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0d1a
     let v=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.8);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.45)");x.fillStyle=v;x.fillRect(0,0,W,H);
   }
   pinta();let t;addEventListener("resize",()=>{clearTimeout(t);t=setTimeout(pinta,150)});
-  const im=new Image();im.onload=()=>{const f=document.getElementById("fotoFundo");f.style.backgroundImage="url(img/fundo.jpg)";f.classList.add("on")};im.src="img/fundo.jpg";
+  const im=new Image();im.onload=()=>{const f=document.getElementById("fotoFundo");f.style.backgroundImage="url(img/fundo.jpg)";f.classList.add("on");document.body.classList.add("com-foto")};im.src="img/fundo.jpg";
 })();
 </script>
 </body>
