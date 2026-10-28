@@ -5,7 +5,7 @@ Busca as não conformidades no quadro do Monday e gera:
 
 Roda no GitHub Actions. O token fica no secret MONDAY_API_TOKEN.
 """
-import json, os, sys, urllib.request
+import json, os, re, sys, urllib.request
 from datetime import datetime, timezone, timedelta
 
 BOARD_ID = 18437464951
@@ -102,9 +102,10 @@ def main():
     for it in buscar_itens():
         v = {c["id"]: (c["text"] or "").strip() for c in it["column_values"]}
         nome = it["name"]
-        num = v.get(COL["num"]) or nome.split("–")[0].strip()
-        # rodapé = nome do item sem o "NC-xx – " do começo
-        titulo = nome.split("–", 1)[1].strip() if "–" in nome else nome
+        m = re.match(r"\s*NC\s*-?\s*(\d+)\s*[-–—:]+\s*(.*)", nome, re.I)
+        num = v.get(COL["num"]) or (f"NC-{int(m.group(1)):02d}" if m else nome)
+        # rodapé = nome do item sem o "NC-xx –" (ou "NC - xx -") do começo
+        titulo = re.sub(r"\s+", " ", m.group(2)).strip() if m else nome
         ncs.append({
             "id": it["id"],
             "num": num,
