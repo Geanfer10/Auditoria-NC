@@ -1,5 +1,5 @@
 {
- "atualizado": "2026-10-28T09:03:27-03:00",
+ "atualizado": "2026-10-28T09:15:31-03:00",
  "ncs": [
   {
    "id": "13405043408",
@@ -22,7 +22,7 @@
    "num": "NC-02",
    "titulo": "Galões de químico sem gaiola na linha",
    "setor": "Polpa",
-   "classificacao": "Menor",
+   "classificacao": "Oportunidade de Melhoria",
    "status": "Aberta",
    "descricao": "Galões de produto químico da bomba dosadora apoiados diretamente sobre a mesa de rolos da linha, sem proteção ou contenção.",
    "requisito": "",
